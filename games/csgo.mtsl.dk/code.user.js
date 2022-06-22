@@ -5,23 +5,24 @@
 // @description:de moPsEk pour CSGO MTSL version 2
 // @description:fr moPsEk
 // @author       mopsfl
-// @version      0.0.2
+// @version      0.0.1
 // @license      MIT
 // @match        *://csgo.mtsl.dk/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=mtsl.dk
+// @icon         https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png
 // @run-at       document-start
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_setClipboard
 // @grant        GM_download
+// @grant        unsafeWindow
 // @grant        window.onurlchange
 // @updateURL    https://github.com/mopsfl/moPsEk/raw/main/games/csgo.mtsl.dk/code.user.js
 // @downloadURL  https://github.com/mopsfl/moPsEk/raw/main/games/csgo.mtsl.dk/code.user.js
+// @require      http://code.jquery.com/jquery-3.4.1.min.js
 // ==/UserScript==
 (function () {
 	'use strict';
-	let a = "asddddddddddddddhauergtpaesyrtasdddddddddddddhauergtpaesyrtddddddhauergtpaesyrtdddddddddddhauergtpaesyrthzdddddddddddhauergtpaesyrthz"
-	a=a||""
+
 	let user = {
 		money: 240,
 		tickets: 0,
@@ -35,25 +36,51 @@
 		luckyWheelWins: []
 	};
 
-	//DATA MANAGMENT
-    let S={"=":"0","!":"1","?":"2",$:"3","%":"4","&":"5","/":"6","\\":"7","-":"8","+":"9"},w=Object.keys(S).join(""),v={0:"=",1:"!",2:"?",3:"$",4:"%",5:"&",6:"/",7:"\\",8:"-",9:"+"};function getUser(){return JSON.parse(y(localStorage.localsave))}function f(o){return decodeURIComponent(o.split("").map((function(o){return"%"+("00"+o.charCodeAt(0).toString(16)).slice(-2)})).join(""))}function y(o){let e=[],t="";for(let n=0;n<o.length;n++){let c=o[n];c.match(/[A-Z]/)||w.includes(c)?(t+=w.includes(c)?S[c]:c.toLowerCase(),e.push(parseInt(t,36)),t=""):t+=c}let n,c={},l=String.fromCharCode(e[0]),s=l,i=[l],r=256;for(let o=1;o<e.length;o++){let t=e[o];n=t<256?String.fromCharCode(e[o]):c[t]?c[t]:s+l,i.push(n),l=n[0],c[r]=s+l,r++,s=n}return f(i.join(""))}function m(o){return encodeURIComponent(o).replace(/%([0-9A-F]{2})/g,(function(o,e){return String.fromCharCode("0x"+e)}))}function h(o){let e,t={},n=((o=m(o))+"").split(""),c=[],l=n[0],s=256;for(let o=1;o<n.length;o++)e=n[o],null!=t[l+e]?l+=e:(c.push(l.length>1?t[l]:l.charCodeAt(0)),t[l+e]=s,s++,l=e);return c.push(l.length>1?t[l]:l.charCodeAt(0)),c.map((o=>{let e=o.toString(36);return e.substring(0,e.length-1)+(e[e.length-1].match(/[0-9]/)?v[e[e.length-1]]:e[e.length-1].toUpperCase())})).join("")}function c_mmid(o){for(var e="",t="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",n=t.length,c=0;c<o;c++)e+=t.charAt(Math.floor(Math.random()*n));return e}let ic=0,liit=0;var itemNames=["bravo","breakout","brokenfang","cs20","csgoweapon","csgoweapon2","csgoweapon3","falchion","fracture","gamma","horizon","huntsman","phoenix","prisma","prisma2","spectrum","spectrum2","winteroffensive","snakebite","gamma2","clutch","chroma","chroma2","chroma3","shadow","collections/assault","collections/aztec","collections/dust","collections/inferno","collections/militia","collections/nuke","collections/office","collections/vertigo","vanguard","revolver","wildfire","glove","hydra","dangerzone","shatteredweb","collections/risingsun","collections/stmarc","collections/overpass","collections/norse","collections/mirage","collections/cobblestone","collections/havoc","collections/godsandmonsters","collections/alpha","collections/ancient","collections/baggage","collections/bank","collections/cache","collections/canals","collections/chopshop","collections/control","collections/dust2","collections/dust22021","collections/inferno2018","collections/italy","collections/lake","collections/mirage2021","collections/nuke2018","collections/safehouse","collections/train","collections/train2021","collections/vertigo2021","riptide","doppler-phases/phases","esports2013","esports2013winter","esports2014summer","dreamsandnightmares"];
+    const compatible_versions = [
+        "v2.0.b16",
+    ]
 
     //SETUP
 	try {
-		if (!localStorage.getItem('_mmid')) {
-			localStorage.setItem('_mmid', c_mmid(10));
-            log('Mod menu client mmid created sucessfully!', 'yellow');
+        log('Initalizing moPsEk,', 'yellow');
+		if (!localStorage.getItem('_moPsEk_uuid')) {
+			localStorage.setItem('_moPsEk_uuid', uuidv4());
+            log('moPsEk client uuid created sucessfully!', 'yellow');
 		}
-		if (!localStorage.getItem('mm_' + localStorage._mmid)) {
-            localStorage.setItem('mm_' + localStorage._mmid, getSaveDataString(getUser()));
-            log('Mod menu client savedata created sucessfully!', 'yellow');
+		if (!localStorage.getItem('moPsEk_' + localStorage._moPsEk_uuid)) {
+            localStorage.setItem('moPsEk_' + localStorage._moPsEk_uuid, getSaveDataString(getUser()));
+            log('moPsEk client savedata created sucessfully!', 'yellow');
 		}
-        localStorage.localsave = localStorage['mm_' + localStorage._mmid];
-        log(`Mod menu setup sucessfully! mmid : ${localStorage._mmid}`, 'green');
+        localStorage.localsave = localStorage['moPsEk_' + localStorage._moPsEk_uuid];
+        log(`moPsEk setup sucessfully! Client UUID : ${localStorage._moPsEk_uuid}`, 'green');
+
+        $(document).ready(function() {
+            initMenu()
+
+            let game_version = document.querySelector("#version-version").innerText
+
+            if(!compatible_versions.includes(game_version)){
+                log("This game version might not be fully compatible with moPsEk.", "red")
+                alert("moPsEk Info\n\nThis game version might not be fully compatible with moPsEk.\nBe sure it's up to date!")
+            } else log(`Game Version '${game_version}' compatible!`, 'green');
+
+            if(GM_info.script.options.run_at != "document-start"){
+                GM_setClipboard("// @run-at       document-start")
+                alert("moPsEk Info\n\n@run-at is not set to 'document-start'\nThis might cause the mod menu to not work correctly.\n\nAdd the string in your clipboard to the script.")
+            }
+        });
 	} catch (e) {
         console.error(e)
-        log('Unable to setup mod menu!', 'red');
+        log('Unable to setup moPsEk!', 'red');
 	}
+
+	//DATA MANAGMENT
+    let S={"=":"0","!":"1","?":"2",$:"3","%":"4","&":"5","/":"6","\\":"7","-":"8","+":"9"},w=Object.keys(S).join(""),v={0:"=",1:"!",2:"?",3:"$",4:"%",5:"&",6:"/",7:"\\",8:"-",9:"+"};function getUser(){return JSON.parse(y(localStorage.localsave))}function f(o){return decodeURIComponent(o.split("").map((function(o){return"%"+("00"+o.charCodeAt(0).toString(16)).slice(-2)})).join(""))}function y(o){let e=[],t="";for(let n=0;n<o.length;n++){let c=o[n];c.match(/[A-Z]/)||w.includes(c)?(t+=w.includes(c)?S[c]:c.toLowerCase(),e.push(parseInt(t,36)),t=""):t+=c}let n,c={},l=String.fromCharCode(e[0]),s=l,i=[l],r=256;for(let o=1;o<e.length;o++){let t=e[o];n=t<256?String.fromCharCode(e[o]):c[t]?c[t]:s+l,i.push(n),l=n[0],c[r]=s+l,r++,s=n}return f(i.join(""))}function m(o){return encodeURIComponent(o).replace(/%([0-9A-F]{2})/g,(function(o,e){return String.fromCharCode("0x"+e)}))}function h(o){let e,t={},n=((o=m(o))+"").split(""),c=[],l=n[0],s=256;for(let o=1;o<n.length;o++)e=n[o],null!=t[l+e]?l+=e:(c.push(l.length>1?t[l]:l.charCodeAt(0)),t[l+e]=s,s++,l=e);return c.push(l.length>1?t[l]:l.charCodeAt(0)),c.map((o=>{let e=o.toString(36);return e.substring(0,e.length-1)+(e[e.length-1].match(/[0-9]/)?v[e[e.length-1]]:e[e.length-1].toUpperCase())})).join("")}function c_mmid(o){for(var e="",t="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",n=t.length,c=0;c<o;c++)e+=t.charAt(Math.floor(Math.random()*n));return e}let ic=0,liit=0;var itemNames=["bravo","breakout","brokenfang","cs20","csgoweapon","csgoweapon2","csgoweapon3","falchion","fracture","gamma","horizon","huntsman","phoenix","prisma","prisma2","spectrum","spectrum2","winteroffensive","snakebite","gamma2","clutch","chroma","chroma2","chroma3","shadow","collections/assault","collections/aztec","collections/dust","collections/inferno","collections/militia","collections/nuke","collections/office","collections/vertigo","vanguard","revolver","wildfire","glove","hydra","dangerzone","shatteredweb","collections/risingsun","collections/stmarc","collections/overpass","collections/norse","collections/mirage","collections/cobblestone","collections/havoc","collections/godsandmonsters","collections/alpha","collections/ancient","collections/baggage","collections/bank","collections/cache","collections/canals","collections/chopshop","collections/control","collections/dust2","collections/dust22021","collections/inferno2018","collections/italy","collections/lake","collections/mirage2021","collections/nuke2018","collections/safehouse","collections/train","collections/train2021","collections/vertigo2021","riptide","doppler-phases/phases","esports2013","esports2013winter","esports2014summer","dreamsandnightmares"];
+    function uuidv4(){return([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,(e=>(e^crypto.getRandomValues(new Uint8Array(1))[0]&15>>e/4).toString(16)))}
+
+
+
+    //FUNCTIONS
 
 	function getSaveDataString() {
 		const a = h(JSON.stringify(user));
@@ -61,7 +88,7 @@
 	}
 
 	function save(r) {
-		localStorage['mm_' + localStorage._mmid] = getSaveDataString();
+		localStorage['moPsEk_' + localStorage._moPsEk_uuid] = getSaveDataString();
 		if (r) return location.reload();
 	}
 
@@ -97,8 +124,8 @@
 
 		pageClone.classList.add('mm');
 		pageClone.innerHTML = `
-        <h1>moPsEk</h1>
-        <h1 style="font-size:20px;border-bottom:solid 1px gray">General</h1>
+        <h1><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png" style="width: 45px;height: auto;"></img> moPsEk</h1>
+        <h1 style="font-size:20px;border-bottom:solid 1px gray"><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/icons8-wrench-100.png" style="width: 17px;height: auto;"></img> General</h1>
         <div class="upgrade">
            <div class="upgrade-title">Set Money</div>
            <div class="upgrade-desc">Change your current money to anything you'd like. <strong style="color:darkred">(This will refresh the page)</strong></div>
@@ -134,7 +161,7 @@
                <button class="button" style="float: right;position: static;" data-mm_gait>Give</button>
            </div>
         </div>
-        <h1 style="font-size:20px;border-bottom:solid 1px gray">Data Managment</h1>
+        <h1 style="font-size:20px;border-bottom:solid 1px gray"><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/icons8-cloud-folder-90.png" style="width: 17px;height: auto;"></img> Data Managment</h1>
         <div class="upgrade">
            <div class="upgrade-title">Export Data</div>
            <div class="upgrade-desc">Export your current client data.<strong style="color:darkred"></strong></div>
@@ -152,26 +179,33 @@
         </div>
         <div class="upgrade">
            <div class="upgrade-title">Wipe Data</div>
-           <div class="upgrade-desc">Wipes all your data saved in your browser. <strong style="color:darkred">(THIS WILL WIPE ALL OF YOUR CLIENT DATA SAVED IN LOCALSTORAGE!)</strong></div>
+           <div class="upgrade-desc">Wipes all your data saved in your browser. <strong style="color:darkred">(This will delete all your data stored in the localstorage!)</strong></div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button red" style="float: right;position: static;" data-mm_wipd>Wipe</button>
            </div>
         </div>
-        <h1 style="font-size:20px;border-bottom:solid 1px gray">moPsEk</h1>
+        <h1 style="font-size:20px;border-bottom:solid 1px gray"><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png" style="width: 17px;height: auto;"></img> moPsEk</h1>
         <div class="upgrade">
-           <p class="upgrade-desc">Script Version: <span style="float:right">v.${GM_info.script.version}</span></p>
+           <p class="upgrade-desc">Script Version<span style="float:right">v.${GM_info.script.version}</span></p>
         </div>
         <div class="upgrade">
-           <p class="upgrade-desc">Client ID: <span style="float:right; user-select:text">${localStorage._mmid}</span></p>
+           <p class="upgrade-desc">Author <span style="float:right; user-select:text">${GM_info.script.author}</span></p>
+        </div>
+        <div class="upgrade">
+           <p class="upgrade-desc">Automatic Update<span style="float:right; user-select:text">${GM_info.script.options.check_for_updates == true ? "Yes" : "No" }</span></p>
+        </div>
+        <div class="upgrade">
+           <p class="upgrade-desc">Client UUID <span style="float:right; user-select:text">${localStorage._moPsEk_uuid}</span></p>
         </div>
         `;
 		document.querySelector('#nav').appendChild(btnClone);
 		document.querySelector('#pages').appendChild(pageClone);
-		btnClone.innerText = 'Mod Menu';
+		btnClone.innerHTML = '<img src="https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png"></img> moPsEk';
 		btnClone.onclick = () => {
 			document.querySelectorAll('.page').forEach(e => e.classList.remove('show'));
 			pageClone.classList.add('show');
 		};
+
 		//OPTIONS
 		const options = {
 			setMoney: {
@@ -266,13 +300,13 @@
 			const data = getSaveDataString(getUser())
             if(!data) return log("Unable to encode current client data", "red");
 
-            return dlFile(`mtslData_${localStorage._mmid}.encoded`, "txt", data)
+            return dlFile(`mtslData_${localStorage._moPsEk_uuid}.encoded`, "txt", data)
 		};
         options.exportData.btn2.onclick = () => {
 			const data = getUser()
             if(!data) return log("Unable to get current client data", "red");
 
-            return dlFile(`mtslData_${localStorage._mmid}.raw`, "txt", JSON.stringify(data,null,2))
+            return dlFile(`mtslData_${localStorage._moPsEk_uuid}.raw`, "txt", JSON.stringify(data,null,2))
 		};
 
         //IMPORT DATA
@@ -317,6 +351,4 @@
             wipeData()
         }
 	}
-
-	window.onload = () => initMenu();
 }());
