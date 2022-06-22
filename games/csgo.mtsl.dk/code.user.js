@@ -13,11 +13,14 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_setClipboard
-// @grant        window.onurlchange
 // @grant        GM_download
+// @grant        window.onurlchange
+// @updateURL    https://github.com/mopsfl/moPsEk/raw/main/games/csgo.mtsl.dk/code.user.js
+// @downloadURL  https://github.com/mopsfl/moPsEk/raw/main/games/csgo.mtsl.dk/code.user.js
 // ==/UserScript==
 (function () {
 	'use strict';
+	
 	let user = {
 		money: 240,
 		tickets: 0,
@@ -31,11 +34,9 @@
 		luckyWheelWins: []
 	};
 
-	//DATA ENCODER
-    let S={"=":"0","!":"1","?":"2",$:"3","%":"4","&":"5","/":"6","\\":"7","-":"8","+":"9"},w=Object.keys(S).join(""),v={0:"=",1:"!",2:"?",3:"$",4:"%",5:"&",6:"/",7:"\\",8:"-",9:"+"};function getUser(){return JSON.parse(y(localStorage.localsave))}function f(t){return decodeURIComponent(t.split("").map((function(t){return"%"+("00"+t.charCodeAt(0).toString(16)).slice(-2)})).join(""))}function y(t){let e=[],n="";for(let r=0;r<t.length;r++){let o=t[r];o.match(/[A-Z]/)||w.includes(o)?(n+=w.includes(o)?S[o]:o.toLowerCase(),e.push(parseInt(n,36)),n=""):n+=o}let r,o={},l=String.fromCharCode(e[0]),h=l,u=[l],a=256;for(let t=1;t<e.length;t++){let n=e[t];r=n<256?String.fromCharCode(e[t]):o[n]?o[n]:h+l,u.push(r),l=r[0],o[a]=h+l,a++,h=r}return f(u.join(""))}function m(t){return encodeURIComponent(t).replace(/%([0-9A-F]{2})/g,(function(t,e){return String.fromCharCode("0x"+e)}))}function h(t){let e,n={},r=((t=m(t))+"").split(""),o=[],l=r[0],h=256;for(let t=1;t<r.length;t++)e=r[t],null!=n[l+e]?l+=e:(o.push(l.length>1?n[l]:l.charCodeAt(0)),n[l+e]=h,h++,l=e);return o.push(l.length>1?n[l]:l.charCodeAt(0)),o.map((t=>{let e=t.toString(36);return e.substring(0,e.length-1)+(e[e.length-1].match(/[0-9]/)?v[e[e.length-1]]:e[e.length-1].toUpperCase())})).join("")}function c_mmid(t){for(var e="",n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",r=n.length,o=0;o<t;o++)e+=n.charAt(Math.floor(Math.random()*r));return e}
-	let ic = 0;
-    let liit = 0;
-    var itemNames=["bravo","breakout","brokenfang","cs20","csgoweapon","csgoweapon2","csgoweapon3","falchion","fracture","gamma","horizon","huntsman","phoenix","prisma","prisma2","spectrum","spectrum2","winteroffensive","snakebite","gamma2","clutch","chroma","chroma2","chroma3","shadow","collections/assault","collections/aztec","collections/dust","collections/inferno","collections/militia","collections/nuke","collections/office","collections/vertigo","vanguard","revolver","wildfire","glove","hydra","dangerzone","shatteredweb","collections/risingsun","collections/stmarc","collections/overpass","collections/norse","collections/mirage","collections/cobblestone","collections/havoc","collections/godsandmonsters","collections/alpha","collections/ancient","collections/baggage","collections/bank","collections/cache","collections/canals","collections/chopshop","collections/control","collections/dust2","collections/dust22021","collections/inferno2018","collections/italy","collections/lake","collections/mirage2021","collections/nuke2018","collections/safehouse","collections/train","collections/train2021","collections/vertigo2021","riptide","doppler-phases/phases","esports2013","esports2013winter","esports2014summer","dreamsandnightmares"];
+	//DATA MANAGMENT
+    let S={"=":"0","!":"1","?":"2",$:"3","%":"4","&":"5","/":"6","\\":"7","-":"8","+":"9"},w=Object.keys(S).join(""),v={0:"=",1:"!",2:"?",3:"$",4:"%",5:"&",6:"/",7:"\\",8:"-",9:"+"};function getUser(){return JSON.parse(y(localStorage.localsave))}function f(o){return decodeURIComponent(o.split("").map((function(o){return"%"+("00"+o.charCodeAt(0).toString(16)).slice(-2)})).join(""))}function y(o){let e=[],t="";for(let n=0;n<o.length;n++){let c=o[n];c.match(/[A-Z]/)||w.includes(c)?(t+=w.includes(c)?S[c]:c.toLowerCase(),e.push(parseInt(t,36)),t=""):t+=c}let n,c={},l=String.fromCharCode(e[0]),s=l,i=[l],r=256;for(let o=1;o<e.length;o++){let t=e[o];n=t<256?String.fromCharCode(e[o]):c[t]?c[t]:s+l,i.push(n),l=n[0],c[r]=s+l,r++,s=n}return f(i.join(""))}function m(o){return encodeURIComponent(o).replace(/%([0-9A-F]{2})/g,(function(o,e){return String.fromCharCode("0x"+e)}))}function h(o){let e,t={},n=((o=m(o))+"").split(""),c=[],l=n[0],s=256;for(let o=1;o<n.length;o++)e=n[o],null!=t[l+e]?l+=e:(c.push(l.length>1?t[l]:l.charCodeAt(0)),t[l+e]=s,s++,l=e);return c.push(l.length>1?t[l]:l.charCodeAt(0)),c.map((o=>{let e=o.toString(36);return e.substring(0,e.length-1)+(e[e.length-1].match(/[0-9]/)?v[e[e.length-1]]:e[e.length-1].toUpperCase())})).join("")}function c_mmid(o){for(var e="",t="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",n=t.length,c=0;c<o;c++)e+=t.charAt(Math.floor(Math.random()*n));return e}let ic=0,liit=0;var itemNames=["bravo","breakout","brokenfang","cs20","csgoweapon","csgoweapon2","csgoweapon3","falchion","fracture","gamma","horizon","huntsman","phoenix","prisma","prisma2","spectrum","spectrum2","winteroffensive","snakebite","gamma2","clutch","chroma","chroma2","chroma3","shadow","collections/assault","collections/aztec","collections/dust","collections/inferno","collections/militia","collections/nuke","collections/office","collections/vertigo","vanguard","revolver","wildfire","glove","hydra","dangerzone","shatteredweb","collections/risingsun","collections/stmarc","collections/overpass","collections/norse","collections/mirage","collections/cobblestone","collections/havoc","collections/godsandmonsters","collections/alpha","collections/ancient","collections/baggage","collections/bank","collections/cache","collections/canals","collections/chopshop","collections/control","collections/dust2","collections/dust22021","collections/inferno2018","collections/italy","collections/lake","collections/mirage2021","collections/nuke2018","collections/safehouse","collections/train","collections/train2021","collections/vertigo2021","riptide","doppler-phases/phases","esports2013","esports2013winter","esports2014summer","dreamsandnightmares"];
+
     //SETUP
 	try {
 		if (!localStorage.getItem('_mmid')) {
@@ -43,23 +44,25 @@
             log('Mod menu client mmid created sucessfully!', 'yellow');
 		}
 		if (!localStorage.getItem('mm_' + localStorage._mmid)) {
-			localStorage.setItem('mm_' + localStorage._mmid, getSaveDataString(getUser()));
-			log('Mod menu client savedata created sucessfully!', 'yellow');
+            localStorage.setItem('mm_' + localStorage._mmid, getSaveDataString(getUser()));
+            log('Mod menu client savedata created sucessfully!', 'yellow');
 		}
-		localStorage.localsave = localStorage['mm_' + localStorage._mmid];
+        localStorage.localsave = localStorage['mm_' + localStorage._mmid];
         log(`Mod menu setup sucessfully! mmid : ${localStorage._mmid}`, 'green');
 	} catch (e) {
+        console.error(e)
         log('Unable to setup mod menu!', 'red');
 	}
+
 	function getSaveDataString() {
 		const a = h(JSON.stringify(user));
 		return a;
 	}
+
 	function save(r) {
 		localStorage['mm_' + localStorage._mmid] = getSaveDataString();
 		if (r) return location.reload();
 	}
-
 
 	//MAIN
 	user = getUser();
@@ -67,30 +70,16 @@
 		console.info(`%c${ message }`, `background-color:black;padding:5px;border-left:solid 4px ${ color };color:white`);
 	}
 
-    function dlFile(filename, fileType, content) {
-        if(!(filename??fileType??content)) return log("Could not create file. (Missing attr)","red");
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-        element.setAttribute('download', `${filename}.${fileType}`);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+    function dlFile(e, t, n) {
+        if (!(e ?? t ?? n))
+        return log('Could not create file. (Missing attr)', 'red');
+        var d = document.createElement('a');
+        d.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(n)), d.setAttribute('download', `${ e }.${ t }`), d.style.display = 'none', document.body.appendChild(d), d.click(), document.body.removeChild(d);
     }
 
-    function byteToSize(byte){
-        var size = byte;
-        if(size < 1024){
-            return size + "B";
-        } else if(size < 1024 * 1024){
-            return (size / 1024).toFixed(2) + "KB";
-        } else if(size < 1024 * 1024 * 1024){
-            return (size / 1024 * 1024).toFixed(2) + "MB";
-        } else if(size < 1024 * 1024 * 1024 * 1024){
-            return (size / 1024 * 1024 * 1024).toFixed(2) + "GB";
-        } else {
-            return (size / 1024 * 1024 * 1024 * 1024).toFixed(2) + "TB";
-        }
+    function byteToSize(e) {
+        var t = e;
+        return t < 1024 ? t + 'B' : t < 1048576 ? (t / 1024).toFixed(2) + 'KB' : t < 1073741824 ? (t / 1024 * 1024).toFixed(2) + 'MB' : t < 1099511627776 ? (t / 1024 * 1024 * 1024).toFixed(2) + 'GB' : (t / 1024 * 1024 * 1024 * 1024).toFixed(2) + 'TB';
     }
 
     function wipeData(){
@@ -327,7 +316,6 @@
             wipeData()
         }
 	}
-	window.onload = () => {
-		initMenu();
-	};
+
+	window.onload = () => initMenu();
 }());
