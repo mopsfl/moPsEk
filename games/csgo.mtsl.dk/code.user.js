@@ -20,7 +20,8 @@
 // ==/UserScript==
 (function () {
 	'use strict';
-	
+	let a = "asddddddddddddddhauergtpaesyrtasdddddddddddddhauergtpaesyrtddddddhauergtpaesyrtdddddddddddhauergtpaesyrthzdddddddddddhauergtpaesyrthz"
+	a=a||""
 	let user = {
 		money: 240,
 		tickets: 0,
