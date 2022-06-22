@@ -1,3 +1,3 @@
 # csgo.mtsl.dk
 
-[![Play](csgo.mtsl.dk)](csgo.mtsl.dk)
+[![Play](https://csgo.mtsl.dk)](https://csgo.mtsl.dk)
