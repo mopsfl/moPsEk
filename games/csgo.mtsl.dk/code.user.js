@@ -5,7 +5,7 @@
 // @description:de moPsEk pour CSGO MTSL version 2
 // @description:fr moPsEk
 // @author       mopsfl
-// @version      0.1
+// @version      0.0.1
 // @license      MIT
 // @match        *://csgo.mtsl.dk/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=mtsl.dk
