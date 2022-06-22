@@ -1,3 +1,4 @@
 # csgo.mtsl.dk
 
-[![Play](https://csgo.mtsl.dk)](https://csgo.mtsl.dk) CSGO Case Clicker 2
+> [![Install](https://csgo.mtsl.dk)](https://csgo.mtsl.dk) CSGO Case Clicker 2
+> [![Play](https://csgo.mtsl.dk)](https://csgo.mtsl.dk) CSGO Case Clicker 2
