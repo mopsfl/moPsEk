@@ -174,7 +174,7 @@
 		console.info(`%c${ t }`, `background-color:black;padding:5px;border-left:solid 4px ${ e };color:white`);
 	}
 	function m(t, e, o) {
-		if (!(t || e | o))
+		if (!(t || e || o))
 			return p('Could not create file. (Missing attr)', 'red');
 		var n = document.createElement('a');
 		n.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(o)), n.setAttribute('download', `${ t }.${ e }`), n.style.display = 'none', document.body.appendChild(n), n.click(), document.body.removeChild(n);
@@ -203,9 +203,7 @@
 			};
 			o.inventory.forEach(e => {
 				t.inventory.push(e);
-			}), Object.keys(o).forEach(e => {
-				console.log(`${ e } : ${ o[e] }`), o[e] && null != o[e] && 'inventory' != e && (t[e] = o[e], localStorage.localsave = d());
-			});
+			}), console.log(o), t.money += o.money, t.xp += o.xp, t.tokens = o.tokens, t.tickets = o.tickets, localStorage.localsave = d();
 		}(JSON.parse(a(localStorage['moPsEk_' + localStorage._moPsEk_uuid]))), window.onload = () => {
 			!function () {
 				const e = document.querySelector('#nav>button').cloneNode(!0), o = document.querySelector('.page').cloneNode(!0);
@@ -260,13 +258,13 @@
 					const e = parseInt(n.setTickets.input.value);
 					return t.tickets = e, p(`Set tickets to ${ e }.`, 'green'), u(!0);
 				}, n.giveAllItems.btn.onclick = () => {
-					l = 0, r = 0, g("Fetching all packages. This may take a few seconds. (Page will refresh after It's finished)"), c.forEach(e => {
+					l = 0, r = 0, g("Fetching all item lists. This may take a few seconds. (Page will refresh after It's finished)"), c.forEach(e => {
 						++l, fetch(`https://csgo.mtsl.dk/data/items/${ e }.json?v=15`).then(t => t.json()).then(o => {
 							++r, Object.keys(o).forEach(async e => {
 								await t.inventory.push(e);
-							}), p(`Fetching package '${ e }'.`, 'yellow'), r == c.length && (p('Successfully fetched all packages.', 'green'), g('Successfully fetched all packages.'), u(!0));
+							}), p(`Fetching item list '${ e }'.`, 'yellow'), r == c.length && (p('Successfully fetched all item lists.', 'green'), g('Successfully fetched all item lists.'), u(!0));
 						});
-					}), p(`Fetching ${ l } packages.`, 'yellow');
+					}), p(`Fetching ${ l } item lists.`, 'yellow');
 				}, n.exportData.btn.onclick = () => {
 					const t = d(s());
 					return t ? m(`mtslData_${ localStorage._moPsEk_uuid }.encoded`, 'txt', t) : p('Unable to encode current client data', 'red');
