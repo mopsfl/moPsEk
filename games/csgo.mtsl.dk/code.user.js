@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         moPsEk - CSGO MTSL 2 DEV
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/mopsfl/moPsEk
 // @description  moPsEk for CSGO MTSL Version 2
 // @author       mopsfl
 // @version      0.0.5
