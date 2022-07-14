@@ -1,5 +1,6 @@
 {
   "compatible_versions": [
-    "v2.0.b16"
+    "v2.0.b16",
+    "v2.17"
   ]
 }
