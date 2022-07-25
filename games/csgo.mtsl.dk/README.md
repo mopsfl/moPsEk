@@ -1,5 +1,6 @@
 # csgo.mtsl.dk
 
+[![DOWNLOADS](https://img.shields.io/greasyfork/dt/446977?color=green&label=greasyfork&logo=tampermonkey&style=for-the-badge)](https://greasyfork.org/en/scripts/446977-mopsek-csgo-mtsl-2-mod-menu)
 
 [![PLAY](https://img.shields.io/badge/PLAY-E34F26.svg?&style=for-the-badge)](https://csgo.mtsl.dk)
 
