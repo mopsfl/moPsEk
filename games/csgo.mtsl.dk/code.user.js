@@ -3,7 +3,7 @@
 // @namespace    https://github.com/mopsfl/moPsEk
 // @description  moPsEk for CSGO MTSL Version 2
 // @author       mopsfl
-// @version      0.0.7
+// @version      0.0.8
 // @license      MIT
 // @match        *://csgo.mtsl.dk/
 // @match        *://csgo.mtsl.dk/esr/
