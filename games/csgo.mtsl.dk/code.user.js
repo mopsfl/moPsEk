@@ -3,7 +3,7 @@
 // @namespace    https://github.com/mopsfl/moPsEk
 // @description  moPsEk for CSGO MTSL Version 2
 // @author       mopsfl
-// @version      0.0.8
+// @version      0.0.9
 // @license      MIT
 // @match        *://csgo.mtsl.dk/
 // @match        *://csgo.mtsl.dk/esr/
@@ -16,29 +16,29 @@
 // @grant        window.onurlchange
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
     let user = {
-            money: 240,
-            tickets: 0,
-            tokens: 0,
-            xp: 0,
-            stats: { creation: new Date().getTime() },
-            inventory: [],
-            upgrades: {},
-            achievements: {},
-            achievements_collected: {},
-            luckyWheelWins: [],
-            upgrades: {
-                maxClick: null,
-                minClick: null,
-                passiveIncome: null,
-                offlineIncome: null,
-                offlineBank: null,
-                missionGeneration: null
-            },
+        money: 240,
+        tickets: 0,
+        tokens: 0,
+        xp: 0,
+        stats: { creation: new Date().getTime() },
+        inventory: [],
+        upgrades: {},
+        achievements: {},
+        achievements_collected: {},
+        luckyWheelWins: [],
+        upgrades: {
+            maxClick: null,
+            minClick: null,
+            passiveIncome: null,
+            offlineIncome: null,
+            offlineBank: null,
+            missionGeneration: null
         },
+    },
         temp_inventory = []
 
     //DATA MANAGMENT
@@ -49,7 +49,7 @@
 
     function getUser() { return JSON.parse(y(localStorage.localsave)) }
 
-    function f(e) { return decodeURIComponent(e.split("").map((function(e) { return "%" + ("00" + e.charCodeAt(0).toString(16)).slice(-2) })).join("")) }
+    function f(e) { return decodeURIComponent(e.split("").map((function (e) { return "%" + ("00" + e.charCodeAt(0).toString(16)).slice(-2) })).join("")) }
 
     function y(e) {
         let t = [],
@@ -70,7 +70,7 @@
         return f(a.join(""))
     }
 
-    function m(e) { return encodeURIComponent(e).replace(/%([0-9A-F]{2})/g, (function(e, t) { return String.fromCharCode("0x" + t) })) }
+    function m(e) { return encodeURIComponent(e).replace(/%([0-9A-F]{2})/g, (function (e, t) { return String.fromCharCode("0x" + t) })) }
 
     function h(e) {
         let t, o = {},
@@ -103,14 +103,14 @@
     }
 
     function log(message, color) {
-        console.info(`%c${ message }`, `background-color:black;padding:5px;border-left:solid 4px ${ color };color:white`);
+        console.info(`%c${message}`, `background-color:black;padding:5px;border-left:solid 4px ${color};color:white`);
     }
 
     function loadAchievements() {
         fetch("https://raw.githubusercontent.com/mopsfl/moPsEk/main/games/csgo.mtsl.dk/achievements.json").then(response => response.json())
             .then(data => {
                 achievements = data;
-                log(`Fetched ${ Object.keys(achievements).length } achievements.`, "green");
+                log(`Fetched ${Object.keys(achievements).length} achievements.`, "green");
             }).catch(error => {
                 log(error);
                 nf("Unable to load achievements.", "red")
@@ -120,7 +120,7 @@
     function dlFile(e, t, n) {
         if (!(e || t || n)) return log('Could not create file. (Missing attr)', 'red');
         var d = document.createElement('a');
-        d.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(n)), d.setAttribute('download', `${ e }.${ t }`), d.style.display = 'none', document.body.appendChild(d), d.click(), document.body.removeChild(d);
+        d.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(n)), d.setAttribute('download', `${e}.${t}`), d.style.display = 'none', document.body.appendChild(d), d.click(), document.body.removeChild(d);
     }
 
     function byteToSize(e) {
@@ -141,12 +141,20 @@
         notifs.classList.remove("hide")
 
         notif.classList.add("notification")
-        notif.innerHTML = `<div class="notification-message"><span style="${c?'color:'+c||'inherit':''}">${!t?"moPsEk: ":""}${msg}</span></div><div class="notification-close"></div>`
+        notif.innerHTML = `<div class="notification-message"><span style="${c ? 'color:' + c || 'inherit' : ''}">${!t ? "moPsEk: " : ""}${msg}</span></div><div class="notification-close"></div>`
 
         notif.querySelector(".notification-close").onclick = () => { notif.remove() }
 
         notifs.appendChild(notif)
     }
+
+    const injectCSS = css => {
+        let el = document.createElement('style');
+        el.type = 'text/css';
+        el.innerText = css;
+        document.head.appendChild(el);
+        return el;
+    };
 
     function parseNumbers(string) {
         string = string.toString()
@@ -157,13 +165,13 @@
         if (!d || d == null) return;
 
         const a = {
-                money: d.money,
-                xp: d.xp,
-                tokens: d.tokens,
-                tickets: d.tickets,
-                achievements: d.achievements,
-                upgrades: d.upgrades,
-            },
+            money: d.money,
+            xp: d.xp,
+            tokens: d.tokens,
+            tickets: d.tickets,
+            achievements: d.achievements,
+            upgrades: d.upgrades,
+        },
             inv = JSON.parse(localStorage['moPsEk_' + localStorage._moPsEk_uuid + "_tempInv"])
 
         temp_inventory = inv
@@ -211,7 +219,9 @@
         let n = document.createElement('span');
         n.classList.add('_tooltip')
         n.style = 'position: absolute;z-index: 9999;background-color: #333;border: 2px solid #555;min-width: 15px;padding: 4px;border-radius: 3px;max-width: 250px;word-break: break-word;font-family: "Roboto", sans-serif;'
-
+        injectCSS(`
+        .upgrade-mph:hover{transform:scale(1)}
+        `)
         document.onmousemove = t => {
             n.style.left = t.clientX - n.offsetWidth + 'px'
             n.style.top = t.clientY - n.offsetHeight + 'px'
@@ -224,63 +234,63 @@
         pageClone.innerHTML = `
         <h1><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png" style="width: 45px;height: auto;" loading="lazy"></img> moPsEk</h1>
         <h1 style="font-size:20px;border-bottom:solid 1px gray"><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/icons8-wrench-100.png" style="width: 17px;height: auto;" loading="lazy"></img> General <span style="font-size:10px; color: #888">Too high values can result in a bugged display. (But still counts)</span></h1>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set Money<span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Changes your current money.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_sm>Set</button><input class="input" placeholder="Money" style="float: right;" data-mm_smi>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set XP<span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Changes your current XP.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_sxp>Set</button><input class="input" placeholder="XP" style="float: right;" data-mm_sxpi>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set Tokens<span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Changes your current tokens.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_stks>Set</button><input class="input" placeholder="Tokens" style="float: right;" data-mm_stksi>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set Tickets<span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Changes your tickets.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_stk>Set</button><input class="input" placeholder="Tickets" style="float: right;" data-mm_stki>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set Money per Click<span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Changes the amount of money you get per click.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_mpc>Set</button><input class="input" placeholder="Min" style="float: right;" data-mm_mpcmi><input class="input" placeholder="Max" style="float: right;" data-mm_mpcxi>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set Passive income <span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Unlocks and finishes all achievements.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_spin>Set</button><input class="input" placeholder="Passive Income" style="float: right;" data-mm_pini>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Set Offline income <span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Changes the amount of the offline income.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_soin>Set</button><input class="input" placeholder="Offline Income" style="float: right;" data-mm_oini>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Give all items<span data-info='Will refresh your page & might cause lags or slow down the page.' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Gives you every item (Knives, Skins, Cases, ...).</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_gait>Give</button>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Give all achievements <span data-info='Will refresh your page!' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Unlocks and finishes all achievements.</div>
            <div style="position: absolute;top: 14px;right: 0;">
@@ -288,7 +298,7 @@
            </div>
         </div>
         <h1 style="font-size:20px;border-bottom:solid 1px gray"><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/icons8-cloud-folder-90.png" style="width: 17px;height: auto;" loading="lazy"></img> Data Managment</h1>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Export Data</div>
            <div class="upgrade-desc">Export your current client data.</div>
            <div style="position: absolute;top: 14px;right: 0;">
@@ -296,28 +306,28 @@
                <button class="button" style="float: right;position: static;" data-mm_excd_rw>Raw</button>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Import Data</div>
            <div class="upgrade-desc">Import your saved client data.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_imd_en>Import</button>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Create backup</div>
            <div class="upgrade-desc">Creates a backup of your current data.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_cbup>Create</button>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Load backup</div>
            <div class="upgrade-desc">Loads your recent created backup.</div>
            <div style="position: absolute;top: 14px;right: 0;">
                <button class="button" style="float: right;position: static;" data-mm_delbup>Load</button>
            </div>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <div class="upgrade-title">Wipe Data <span data-info='Will open/close seperate tabs! Be sure popups are allowed. If it doesnt work, do it again.' style="position: absolute;height: 15px;width: 15px;background: #333;border-radius: 1ex;margin-left: 5px;padding: 1px;"><img style="width: 100%;height: auto;/*! text-align: center;" src='https://raw.githubusercontent.com/mopsfl/moPsEk/main/assets/icons8-exclamation-mark-90.png' alt='!'></img></span></div>
            <div class="upgrade-desc">Wipes all your game data.</div>
            <div style="position: absolute;top: 14px;right: 0;">
@@ -325,26 +335,27 @@
            </div>
         </div>
         <h1 style="font-size:20px;border-bottom:solid 1px gray"><img src="https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png" style="width: 17px;height: auto;" loading="lazy"></img> moPsEk</h1>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <p class="upgrade-desc">Script Version<span style="float:right">v.${GM_info.script.version}</span></p>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <p class="upgrade-desc">Author <span style="float:right; user-select:text">${GM_info.script.author}</span></p>
         </div>
-        <div class="upgrade">
-           <p class="upgrade-desc">Automatic Update<span style="float:right; user-select:text">${GM_info.script.options.check_for_updates == true ? "Yes" : "No" }</span></p>
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
+           <p class="upgrade-desc">Automatic Update<span style="float:right; user-select:text">${GM_info.script.options.check_for_updates == true ? "Yes" : "No"}</span></p>
         </div>
-        <div class="upgrade">
+        <div class="upgrade upgrade-mph" style="width:95%; position: static; height: 25px; background: none; ">
            <p class="upgrade-desc">Client UUID <span style="float:right; user-select:text">${localStorage._moPsEk_uuid}</span></p>
         </div>
         `;
 
         document.querySelector('#nav').appendChild(btnClone);
-        document.querySelector('#pages').appendChild(pageClone);
+        document.querySelector('#pages').appendChild(pageClone)
         btnClone.innerHTML = '<img src="https://github.com/mopsfl/moPsEk/raw/main/assets/bulldog--v2.png%202x.png"></img> moPsEk';
         btnClone.onclick = () => {
             document.querySelectorAll('.page').forEach(e => e.classList.remove('show'));
             pageClone.classList.add('show');
+            document.querySelector('#pages').appendChild(pageClone)
         };
 
         pageClone.querySelectorAll('[data-info]').forEach(t => {
@@ -358,6 +369,7 @@
                 n.innerText = '';
             };
         });
+
 
         //OPTIONS
         const options = {
@@ -425,7 +437,7 @@
                 return
             };
             user.money = value;
-            log(`Set money to ${ value }.`, 'green');
+            log(`Set money to ${value}.`, 'green');
             return save(true);
         };
 
@@ -439,7 +451,7 @@
                 return
             };
             user.xp = value;
-            log(`Set xp to ${ value }.`, 'green');
+            log(`Set xp to ${value}.`, 'green');
             return save(true);
         };
 
@@ -453,7 +465,7 @@
                 return
             };
             user.tokens = value;
-            log(`Set tokens to ${ value }.`, 'green');
+            log(`Set tokens to ${value}.`, 'green');
             return save(true);
         };
 
@@ -467,7 +479,7 @@
                 return
             };
             user.tickets = value;
-            log(`Set tickets to ${ value }.`, 'green');
+            log(`Set tickets to ${value}.`, 'green');
             return save(true);
         };
 
@@ -523,7 +535,7 @@
                 var reader = new FileReader();
                 var file = input.files[0]
 
-                reader.onload = function() {
+                reader.onload = function () {
                     var text = reader.result
                     if (!text) return log(`Unable to get file text from '${file.name}'`, "red")
                     console.log(text)
@@ -611,7 +623,7 @@
             if (!data) return log("Unable to get current local data", "red")
             let min = options.setMoneyPerClick.min.value.replace(/\D/g, '')
             let max = options.setMoneyPerClick.max.value.replace(/\D/g, '')
-                //const valid = parseInt(Number(min)??Number(max)) ? true : false
+            //const valid = parseInt(Number(min)??Number(max)) ? true : false
             const valid = (parseNumbers(min) || parseNumbers(max)) != '' ? true : false
             if (!valid) {
                 log("Unable to parse numbers for min|max", "red")
@@ -658,6 +670,7 @@
             user.upgrades.offlineIncome = parseInt(value) * 100
             return save(true)
         }
+
 
         //
 
